@@ -17,9 +17,35 @@ const db = mysql.createConnection(
     },
     console.log('Connected to the business_db database.')
   );
-  db.query(`SELECT * FROM department`, (err, rows) => {
-    console.log(rows);
-  });
+//   db.query(`SELECT * FROM department`, (err, rows) => {
+//     console.log(rows);
+//   });
+
+// GET a single department
+// db.query(`SELECT * FROM department WHERE id = 1`, (err, row) => {
+//     if (err) {
+//       console.log(err);
+//     }
+//     console.log(row);
+//   });
+// Delete a department
+// db.query(`DELETE FROM department WHERE id = ?`, 6, (err, result) => {
+//     if (err) {
+//       console.log(err);
+//     }
+//     console.log(result);
+//   });
+// Create a department
+// const sql = `INSERT INTO department (id, dept_name) 
+//               VALUES (?,?)`;
+// const params = [6, 'Human Resources'];
+
+// db.query(sql, params, (err, result) => {
+//   if (err) {
+//     console.log(err);
+//   }
+//   console.log(result);
+// });
 
   // Default response for any other request (Not Found)
 app.use((req, res) => {
