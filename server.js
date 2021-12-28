@@ -136,6 +136,26 @@ app.get ('/api/roles/:id', (req, res) => {
         })
   });
 
+  // Delete a department
+app.delete('/api/roles/:id', (req, res) => {
+    const sql = `DELETE FROM roles WHERE id = ?`;
+    const params = [req.params.id];
+    db.query(sql, params, (err, result) => {
+        if (err) {
+          res.status(400).json({ error: res.message });
+        } else if (!result.affectedRows) {
+          res.json({
+            message: 'Role not found'
+          });
+        } else {
+          res.json({
+            message: 'deleted',
+            changes: result.affectedRows,
+            id: req.params.id
+          });
+        }
+      });
+    });
 
     // Default response for any other request (Not Found)
 app.use((req, res) => {
