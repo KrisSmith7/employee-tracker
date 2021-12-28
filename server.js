@@ -18,6 +18,9 @@ const db = mysql.createConnection(
     },
     console.log('Connected to the business_db database.')
   );
+
+//DEPARTMENT ROUTES--------------------------------
+  
 // GET all departments
 app.get('/api/department', (req, res) => {
     const sql = `SELECT * FROM department`;
@@ -91,6 +94,49 @@ app.post('/api/department', ({ body }, res) => {
     });
     
 });
+
+//ROLES ROUTES ----------------------------------------
+// GET all roles
+app.get('/api/roles', (req, res) => {
+    const sql = `SELECT roles.*, department.dept_name
+                AS department_name
+                FROM roles
+                LEFT JOIN department
+                ON roles.department_id = department.id;`;
+    db.query(sql, (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+          }
+          res.json({
+            message: 'success',
+            data: rows
+          });
+    });
+})  
+
+// GET a single role
+app.get ('/api/roles/:id', (req, res) => {
+    const sql = `SELECT roles.*, department.dept_name
+                AS department_name
+                FROM roles
+                LEFT JOIN department
+                ON roles.department_id = department.id
+                WHERE roles.id = ?`;
+    const params = [req.params.id];
+    db.query(sql, params, (err, row) => {
+        if (err) {
+            res.status(400).json({ error: err.message });
+            return;
+          }
+          res.json({
+            message: 'success',
+            data: row
+          });
+        })
+  });
+
+
     // Default response for any other request (Not Found)
 app.use((req, res) => {
     res.status(404).end();
