@@ -2,6 +2,7 @@ const mysql = require('mysql2');
 const express = require ('express');
 const PORT = process.env.PORT || 3001;
 const app = express();
+const inputCheck = require('./utils/inputCheck');
 //Express middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -17,37 +18,80 @@ const db = mysql.createConnection(
     },
     console.log('Connected to the business_db database.')
   );
-//   db.query(`SELECT * FROM department`, (err, rows) => {
-//     console.log(rows);
-//   });
+// GET all departments
+app.get('/api/department', (req, res) => {
+    const sql = `SELECT * FROM department`;
+    db.query(sql, (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+          }
+          res.json({
+            message: 'success',
+            data: rows
+          });
+    });
+})  
 
 // GET a single department
-// db.query(`SELECT * FROM department WHERE id = 1`, (err, row) => {
-//     if (err) {
-//       console.log(err);
-//     }
-//     console.log(row);
-//   });
+app.get ('/api/department/:id', (req, res) => {
+    const sql = `SELECT * FROM department WHERE id = ?`;
+    const params = [req.params.id];
+    db.query(sql, params, (err, row) => {
+        if (err) {
+            res.status(400).json({ error: err.message });
+            return;
+          }
+          res.json({
+            message: 'success',
+            data: row
+          });
+        })
+  });
 // Delete a department
-// db.query(`DELETE FROM department WHERE id = ?`, 6, (err, result) => {
-//     if (err) {
-//       console.log(err);
-//     }
-//     console.log(result);
-//   });
+app.delete('/api/department/:id', (req, res) => {
+    const sql = `DELETE FROM department WHERE id = ?`;
+    const params = [req.params.id];
+    db.query(sql, params, (err, result) => {
+        if (err) {
+          res.status(400).json({ error: res.message });
+        } else if (!result.affectedRows) {
+          res.json({
+            message: 'Department not found'
+          });
+        } else {
+          res.json({
+            message: 'deleted',
+            changes: result.affectedRows,
+            id: req.params.id
+          });
+        }
+      });
+    });
 // Create a department
-// const sql = `INSERT INTO department (id, dept_name) 
-//               VALUES (?,?)`;
-// const params = [6, 'Human Resources'];
-
-// db.query(sql, params, (err, result) => {
-//   if (err) {
-//     console.log(err);
-//   }
-//   console.log(result);
-// });
-
-  // Default response for any other request (Not Found)
+app.post('/api/department', ({ body }, res) => {
+    const errors = inputCheck(body, 'dept_name');
+    if (errors) {
+      res.status(400).json({ error: errors });
+      return;
+    }
+    const sql = `INSERT INTO department (dept_name) 
+                  VALUES (?)`;
+    const params = [body.dept_name];
+    
+    db.query(sql, params, (err, result) => {
+        if (err) {
+            res.status(400).json({ error: err.message });
+            return;
+        }
+        res.json({
+            message: 'success',
+            data: body
+        });
+    });
+    
+});
+    // Default response for any other request (Not Found)
 app.use((req, res) => {
     res.status(404).end();
   });
