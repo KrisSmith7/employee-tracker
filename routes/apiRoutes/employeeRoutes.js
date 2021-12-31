@@ -2,21 +2,28 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../db/connection');
 const inputCheck = require('../../utils/inputCheck');
+const consoleTable = require('console.table')
+
 
 // GET all employees
+function viewAllEmployees () {
 router.get('/employees', (req, res) => {
     const sql = `SELECT * FROM employee ORDER BY last_name`;
-    db.query(sql, (err, rows) => {
+    db.query(sql, (err, res) => {
         if (err) {
             res.status(500).json({ error: err.message });
-            return;
-          }
-          res.json({
-            message: 'success',
-            data: rows
-          });
+        //     return;
+          };
+          console.log(res.length + ' employees found!');
+          console.table('All Employees:', res); 
+          options();
+        //   res.json({
+        //     message: 'success',
+        //     data: consoleTable([rows])
+        //   });
     });
 });
+};
 
 // Get single employee
 router.get('/employees/:id', (req, res) => {
@@ -106,4 +113,5 @@ router.delete('/employees/:id', (req, res) => {
       });
     });
 
+    module.exports = { viewAllEmployees};
 module.exports = router;
