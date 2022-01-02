@@ -27,7 +27,6 @@ app.use((req, res) => {
 // Start server after DB connection
 db.connect(err => {
     if (err) throw err;
-    console.log('Database connected.');
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
@@ -49,6 +48,8 @@ function options() {
                     'Add a role',
                     'Update employee role',
                     'Delete an employee',
+                    'Delete a role',
+                    'Delete a department',
                     'EXIT'
                     ]
             }).then(function (answer) {
@@ -76,6 +77,12 @@ function options() {
                         break;
                     case 'Delete an employee':
                         deleteEmployee();
+                        break;
+                    case 'Delete a role':
+                        deleteRole();
+                        break;
+                    case 'Delete a department':
+                        deleteDepartment();
                         break;
                     case 'EXIT': 
                         exitApp();
@@ -217,10 +224,8 @@ function updateRole() {
         },
         {
         name:'roles_id',
-        type:'list',
+        type:'input',
         message:'roles id?',
-        choices:
-            viewRoles()
         },
     )
     .then(function (body) {
@@ -254,6 +259,45 @@ function deleteEmployee() {
             viewAllEmployees();
             });
 
+    });
+};
+
+function deleteRole() {
+    inquirer
+    .prompt(
+        {
+            name: "role_id",
+            type: "input",
+            message:"Which role are you deleting? Enter the corresponding id."
+        })
+        .then(function (body) {
+
+        const sql = `DELETE FROM roles WHERE id = ?`;
+        const param = [body.role_id];
+        db.query(sql, param, (err) => {
+            if (err) throw err;
+            console.log ("Role deleted.");
+            options();
+        });
+    });
+};
+function deleteDepartment() {
+    inquirer
+    .prompt(
+        {
+            name: "dept_id",
+            type: "input",
+            message:"Which department are you deleting? Enter the corresponding id."
+        })
+        .then(function (body) {
+
+        const sql = `DELETE FROM department WHERE id = ?`;
+        const param = [body.dept_id];
+        db.query(sql, param, (err) => {
+            if (err) throw err;
+            console.log ("Department deleted.");
+            options();
+            });
     });
 };
 
