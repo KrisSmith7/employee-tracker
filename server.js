@@ -32,7 +32,7 @@ app.listen(PORT, () => {
   });
 });
 
-// // prompts user with list of options to choose from
+// prompts user with list of options to choose from
 function options() {
     inquirer
         .prompt({
@@ -281,6 +281,7 @@ function deleteRole() {
         });
     });
 };
+
 function deleteDepartment() {
     inquirer
     .prompt(
