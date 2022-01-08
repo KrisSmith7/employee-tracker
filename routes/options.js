@@ -2,7 +2,12 @@ const inquirer = require ('inquirer');
 const ee = require('./employeeRoutes');
 const dept = require('./deptRoutes');
 const role = require('./rolesRoutes')
-const inputCheck = require ('../utils/inputCheck')
+const inputCheck = require ('../utils/inputCheck');
+const db = require('../db/connection');
+function exitApp () {
+    console.log('Thanks for using employee tracker. Goodbye!')
+    db.end;
+}
 
 module.exports.options = function () {
 // prompts user with list of options to choose from
@@ -79,4 +84,3 @@ module.exports.options = function () {
     });
 };
 
- 
