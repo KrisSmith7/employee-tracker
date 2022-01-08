@@ -1,5 +1,8 @@
 const inquirer = require ('inquirer');
 const ee = require('./employeeRoutes');
+const dept = require('./deptRoutes');
+const role = require('./rolesRoutes')
+const inputCheck = require ('../utils/inputCheck')
 
 module.exports.options = function () {
 // prompts user with list of options to choose from
@@ -14,6 +17,9 @@ module.exports.options = function () {
                     'View all employees',
                     'View all departments',
                     'View all roles',
+                    'Select employee by ID',
+                    'Select department by ID',
+                    'Select role by ID',
                     'Add an employee',
                     'Add a department',
                     'Add a role',
@@ -29,31 +35,40 @@ module.exports.options = function () {
                         ee.viewAllEmployees();
                         break;
                     case 'View all departments':
-                        viewDepartments();
+                        dept.viewDepartments();
                         break;
                     case 'View all roles':
-                        viewRoles();
+                        role.viewRoles();
+                        break;
+                    case 'Select employee by ID':
+                        ee.viewSingleEmployee();
+                        break;
+                    case 'Select department by ID':
+                        dept.viewSingleDepartment();
+                        break;
+                    case 'Select role by ID':
+                        role.viewSingleRole();
                         break;
                     case 'Add an employee':
                         ee.addEmployee();
                         break;
                     case 'Add a department':
-                        addDepartment();
+                        dept.addDepartment();
                         break;
                     case 'Add a role':
-                        addRole();
+                        role.addRole();
                         break;
                     case 'Update employee role':
-                        updateEmployee();
+                        ee.updateEmployee();
                         break;
                     case 'Delete an employee':
                         ee.deleteEmployee();
                         break;
                     case 'Delete a role':
-                        deleteRole();
+                        role.deleteRole();
                         break;
                         case 'Delete a department':
-                        deleteDepartment();
+                        dept.deleteDepartment();
                         break;
                     case 'EXIT': 
                         exitApp();

@@ -1,81 +1,79 @@
-// const express = require('express');
-// const router = express.Router();
-// const db = require('../../db/connection');
-// const inputCheck = require('../../utils/inputCheck');
-
-// //DEPARTMENT ROUTES--------------------------------
+const db = require('../db/connection');
+const inquirer = require ('inquirer');
+const inputCheck = require ('../utils/inputCheck')
+const options = require ('./options');
+//DEPARTMENT ROUTES--------------------------------
   
-// // GET all departments
-// router.get('/department', (req, res) => {
-//     const sql = `SELECT * FROM department`;
-//     db.query(sql, (err, rows) => {
-//         if (err) {
-//             res.status(500).json({ error: err.message });
-//             return;
-//           }
-//           res.json({
-//             message: 'success',
-//             data: rows
-//           });
-//     });
-// })  
+// GET all departments
+module.exports.viewDepartments = function () {
+    const sql = `SELECT * FROM department`;
+    db.query(sql, (err, res) => {
+        if (err) {console.log(err)};
+          console.table(res); 
+    });
+    options.options();;
+}
 
-// // GET a single department
-// router.get ('/department/:id', (req, res) => {
-//     const sql = `SELECT * FROM department WHERE id = ?`;
-//     const params = [req.params.id];
-//     db.query(sql, params, (err, row) => {
-//         if (err) {
-//             res.status(400).json({ error: err.message });
-//             return;
-//           }
-//           res.json({
-//             message: 'success',
-//             data: row
-//           });
-//         })
-//   });
-// // Delete a department
-// router.delete('/department/:id', (req, res) => {
-//     const sql = `DELETE FROM department WHERE id = ?`;
-//     const params = [req.params.id];
-//     db.query(sql, params, (err, result) => {
-//         if (err) {
-//           res.status(400).json({ error: res.message });
-//         } else if (!result.affectedRows) {
-//           res.json({
-//             message: 'Department not found'
-//           });
-//         } else {
-//           res.json({
-//             message: 'deleted',
-//             changes: result.affectedRows,
-//             id: req.params.id
-//           });
-//         }
-//       });
-//     });
-// // Create a department
-// router.post('/department', ({ body }, res) => {
-//     const errors = inputCheck(body, 'dept_name');
-//     if (errors) {
-//       res.status(400).json({ error: errors });
-//       return;
-//     }
-//     const sql = `INSERT INTO department (dept_name) 
-//                   VALUES (?)`;
-//     const params = [body.dept_name];
-    
-//     db.query(sql, params, (err, result) => {
-//         if (err) {
-//             res.status(400).json({ error: err.message });
-//             return;
-//         }
-//         res.json({
-//             message: 'success',
-//             data: body
-//         });
-//     });
-// });
 
-// module.exports = router;
+// GET a single department
+module.exports.viewSingleDepartment = function () {
+    inquirer
+  .prompt(
+      {
+          name: "dept_id",
+          type: "input",
+          message:"Which dept are you viewing? Enter the corresponding id."
+      })
+      .then(function (answer) {
+    const sql = `SELECT * FROM department WHERE id = ?`;
+    const params = [answer.dept_id];
+  
+    db.query(sql, params, (err, row) => {
+      if (err) { console.log(err) }   
+      console.table (row)
+    });
+    options.options();
+  });
+  };
+
+// Delete a department
+module.exports.deleteDepartment = function () {
+    inquirer
+    .prompt(
+        {
+            name: "dept_id",
+            type: "input",
+            message:"Which department are you deleting? Enter the department id."
+        })
+        .then(function (answer) {
+    const sql = `DELETE FROM department WHERE id = ?`;
+    db.query(sql, answer.dept_id, (err) => {
+        if (err) {console.log(err)};
+        console.log ('Dept deleted!')
+        });
+    options.options();
+    })
+    };
+
+// Create a department
+module.exports.addDepartment = function () {
+    inquirer
+  .prompt([{
+      name:'dept_name',
+      type:'input',
+      message:'Dept name?'},
+  ])
+  .then(function (answer) {
+    const errors = inputCheck(answer, 'dept_name');
+    if (errors) { console.log(errors) }
+    const sql = `INSERT INTO department (dept_name) 
+                  VALUES (?)`;
+    const params = [answer.dept_name];
+
+    db.query(sql, params, (err) => {
+        if (err) { console.log (err) }
+        console.log('Department added!')
+      });
+      options.options();
+});
+};

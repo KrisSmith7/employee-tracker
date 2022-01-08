@@ -1,43 +1,42 @@
 const db = require('../db/connection');
 const inquirer = require ('inquirer');
+const inputCheck = require ('../utils/inputCheck');
 
-const options = require ('./options')
+const options = require ('./options');
 
+module.exports.viewAllEmployees = function () {
 // GET all employees
-function viewAllEmployees () {
     const sql = `SELECT * FROM employee ORDER BY last_name`;
     db.query(sql, (err, res) => {
         if (err) {console.log(err)};
-          console.log(res)
           console.table(res); 
     });
+    options.options();
 };
 
 // Get single employee
-function viewSingleEmployee () {
+module.exports.viewSingleEmployee = function () {
   inquirer
   .prompt(
       {
           name: "employee_id",
           type: "input",
-          message:"Which employee are you updating? Enter their employee id."
+          message:"Which employee are you viewing? Enter their employee id."
       })
       .then(function (answer) {
     const sql = `SELECT * FROM employee WHERE id = ?`;
-    const params = [answer.params.id];
+    const params = [answer.employee_id];
   
     db.query(sql, params, (err, row) => {
       if (err) { console.log(err) }   
-      res.json({
-        message: 'success',
-        data: row
-      });
+      console.table (row)
     });
+    options.options();
   });
 };
 
 // Create an employee
-function addEmployee () {
+module.exports.addEmployee = function () {
   inquirer
   .prompt([{
       name:'first_name',
@@ -65,13 +64,13 @@ const errors = inputCheck(answer, 'first_name', 'last_name', 'roles_id', 'manage
     
     db.query(sql, params, (err, result) => {
         if (err) { console.log (err) }
-        console.log(result)
-        console.table(answer)
-    });
+        console.log('Employee added!')
+      });
+      options.options();
 });
 };
 
-function updateEmployee () {
+module.exports.updateEmployee = function () {
   inquirer
   .prompt(
       {
@@ -107,7 +106,7 @@ function updateEmployee () {
 };
 
 // Delete a role
-function deleteEmployee () {
+module.exports.deleteEmployee = function () {
   inquirer
       .prompt(
           {
@@ -117,20 +116,10 @@ function deleteEmployee () {
           })
           .then(function (answer) {
     const sql = `DELETE FROM employee WHERE id = ?`;
-    db.query(sql, answer.params.id, (err, result) => {
-        if (err) {console.log(err)} else if (!result.affectedRows) {
-          res.json({
-            message: 'Employee not found'
-          });
-        } else {
-          res.json({
-            message: 'deleted',
-            changes: result.affectedRows,
-            id: answer.params.id
-          });
-        }
-      });
+    db.query(sql, answer.employee_id, (err) => {
+        if (err) {console.log(err)};
+        console.log ('Employee deleted!')
+        });
+    options.options();
     })
 };
-
-module.exports = { viewAllEmployees, viewSingleEmployee, addEmployee, updateEmployee, deleteEmployee };
