@@ -53,6 +53,18 @@ module.exports.viewSingleRole = function () {
 
 // Create a role
 module.exports.addRole = function () {
+    //get the list of all department with department_id to make the choices object list for prompt question
+    const departments = [];
+    db.query("SELECT * FROM DEPARTMENT", async (err, res) => {
+        if (err) throw err;
+        await res.forEach(dept => {
+            let deptChoice = {
+                name: dept.dept_name,
+                value: dept.id,
+            }
+            departments.push(deptChoice);
+        });
+    })
     inquirer
         .prompt([
             {
@@ -83,8 +95,9 @@ module.exports.addRole = function () {
             },
             {
                 name: 'department_id',
-                type: 'input',
-                message: 'What is the corresponding department id?'
+                type: 'list',
+                choices: departments,
+                message: 'What is the corresponding department?'
             }
         ])
         .then(function (answer) {
