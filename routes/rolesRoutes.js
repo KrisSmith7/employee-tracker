@@ -3,7 +3,6 @@ const inquirer = require('inquirer');
 const inputCheck = require('../utils/inputCheck')
 const options = require('./options');
 
-
 // GET all roles
 module.exports.viewRoles = function () {
     const sql = `SELECT roles.*, department.dept_name
@@ -21,6 +20,10 @@ module.exports.viewRoles = function () {
 
 // GET a single role
 module.exports.viewSingleRole = function () {
+    db.query("SELECT title, id FROM roles", async (err, res) => {
+        if (err) throw err;
+        console.table(res)
+    })
     inquirer
         .prompt(
             {
@@ -121,18 +124,9 @@ module.exports.addRole = function () {
 // Delete a role
 module.exports.deleteRole = function () {
     //get the list of all roles with ids to make the choices object list for prompt question
-    const roleChoices = [];
     db.query("SELECT title, id FROM roles", async (err, res) => {
         if (err) throw err;
-        console.log(res)
-        // await res.map(role => {
-        //     let choice = {
-        //         name: role.title,
-        //         value: role.id,
-        //     }
-        //     roleChoices.push(choice);
-        // });
-        //     console.log(roleChoices);
+        console.table(res)
     })
     inquirer
         .prompt([

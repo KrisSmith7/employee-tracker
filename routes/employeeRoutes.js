@@ -9,9 +9,6 @@ const options = require('./options');
 module.exports.viewAllEmployees = function () {
   // GET all employees
   const sql = `SELECT * FROM employee ORDER BY last_name`;
-  // const sql = `SELECT employee.*, roles.title AS title, roles.salary AS salary, department.department_name AS dept_name
-  // FROM employee
-  // LEFT JOIN title salary dept_name`;
   db.query(sql, (err, res) => {
     if (err) { console.log(err) };
     console.table(res);
@@ -131,17 +128,41 @@ module.exports.addEmployee = function () {
 };
 
 module.exports.updateEmployee = function () {
+  db.query("SELECT id, first_name, last_name FROM employee", (err, eeRes) => {
+    if (err) throw err;
+    console.table(eeRes)
+  });
+  db.query("SELECT * FROM roles", (err, roleRes) => {
+    if (err) throw err;
+    console.table(roleRes)
+  });
   inquirer
     .prompt([
       {
         name: "employee_id",
         type: "input",
-        message: "Which employee are you updating? Enter their employee id."
+        message: "Which employee are you updating? Enter their employee id.",
+        validate: answer => {
+          if (answer) {
+              return true;
+          } else {
+              console.log('Please enter a role.')
+              return false;
+          }
+      }
       },
       {
         name: 'roles_id',
         type: 'input',
         message: 'What is the new role? Please enter the corresponding id.',
+        validate: answer => {
+          if (answer) {
+              return true;
+          } else {
+              console.log('Please enter a role.')
+              return false;
+          }
+      }
       },
     ])
     .then(function (answer) {
