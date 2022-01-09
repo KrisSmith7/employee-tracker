@@ -2,6 +2,7 @@ const db = require('../db/connection');
 const inquirer = require('inquirer');
 const inputCheck = require('../utils/inputCheck')
 const options = require('./options');
+const { registerPrompt } = require('inquirer');
 
 // GET all roles
 module.exports.viewRoles = function () {
@@ -55,7 +56,7 @@ module.exports.viewSingleRole = function () {
 module.exports.addRole = function () {
     //get the list of all department with department_id to make the choices object list for prompt question
     const departments = [];
-    db.query("SELECT * FROM DEPARTMENT", async (err, res) => {
+    db.query("SELECT * FROM department", async (err, res) => {
         if (err) throw err;
         await res.forEach(dept => {
             let deptChoice = {
@@ -110,6 +111,7 @@ module.exports.addRole = function () {
 
             db.query(sql, params, (err) => {
                 if (err) { console.log(err) }
+                console.log('Role added!');
                 console.table(answer)
             });
             options.options();
@@ -118,21 +120,28 @@ module.exports.addRole = function () {
 
 // Delete a role
 module.exports.deleteRole = function () {
+    //get the list of all roles with ids to make the choices object list for prompt question
+    const roleChoices = [];
+    db.query("SELECT title, id FROM roles", async (err, res) => {
+        if (err) throw err;
+        console.log(res)
+        // await res.map(role => {
+        //     let choice = {
+        //         name: role.title,
+        //         value: role.id,
+        //     }
+        //     roleChoices.push(choice);
+        // });
+        //     console.log(roleChoices);
+    })
     inquirer
-        .prompt(
+        .prompt([
             {
                 name: "role_id",
                 type: "input",
-                message: "Which role are you deleting? Enter the corresponding id.",
-                validate: idInput => {
-                    if (idInput) {
-                        return true;
-                    } else {
-                        console.log('Please enter a role.')
-                        return false;
-                    }
-                }
-            })
+                message: "Which role are you deleting? Enter the corresponding ID.",
+                // choices: roleChoices,
+            }])
         .then(function (answer) {
             const sql = `DELETE FROM roles WHERE id = ?`;
             const params = [answer.role_id];
