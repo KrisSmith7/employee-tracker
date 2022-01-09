@@ -4,12 +4,14 @@ const inputCheck = require('../utils/inputCheck');
 
 const options = require('./options');
 
+
+
 module.exports.viewAllEmployees = function () {
   // GET all employees
-  // const sql = `SELECT * FROM employee ORDER BY last_name`;
-  const sql = `SELECT employee.*, roles.title AS title, roles.salary AS salary, department.department_name AS dept_name
-  FROM employee
-  LEFT JOIN title salary dept_name`;
+  const sql = `SELECT * FROM employee ORDER BY last_name`;
+  // const sql = `SELECT employee.*, roles.title AS title, roles.salary AS salary, department.department_name AS dept_name
+  // FROM employee
+  // LEFT JOIN title salary dept_name`;
   db.query(sql, (err, res) => {
     if (err) { console.log(err) };
     console.table(res);
@@ -48,6 +50,28 @@ module.exports.viewSingleEmployee = function () {
 
 // Create an employee
 module.exports.addEmployee = function () {
+  //get all the employee list to make choice of employee's manager
+  const employeeChoice = [{ name: 'None', value: null }]; //an employee could have no manager
+  db.query("SELECT id, first_name, last_name FROM EMPLOYEE", (err, eeRes) => {
+    if (err) throw err;
+    eeRes.forEach(({ first_name, last_name, id }) => {
+      employeeChoice.push({
+        name: first_name + " " + last_name,
+        value: id
+      });
+    });
+  });
+  //get list of roles to make choice of employee's role
+  const roleChoice = [];
+  db.query("SELECT id, title FROM roles", (err, rolesRes) => {
+    if (err) throw err;
+    rolesRes.forEach(({ id, title }) => {
+      roleChoice.push({
+        name: title,
+        value: id
+      });
+    });
+  });
   inquirer
     .prompt([{
       name: 'first_name',
@@ -79,14 +103,16 @@ module.exports.addEmployee = function () {
 
     {
       name: 'roles_id',
-      type: 'input',
-      message: 'roles id?'
+      type: 'list',
+      choices: roleChoice,
+      message: "What is this employee's role?"
     },
 
     {
       name: 'manager_id',
-      type: 'input',
-      message: 'Manager id?'
+      type: 'list',
+      choices: employeeChoice,
+      message: "Who is the employee's manager? (can select none)"
     },
     ])
     .then(function (answer) {

@@ -2,7 +2,7 @@ const db = require('../db/connection');
 const inquirer = require('inquirer');
 const inputCheck = require('../utils/inputCheck')
 const options = require('./options');
-const { registerPrompt } = require('inquirer');
+
 
 // GET all roles
 module.exports.viewRoles = function () {
