@@ -38,6 +38,10 @@ module.exports.viewSingleDepartment = function () {
 
 // Delete a department
 module.exports.deleteDepartment = function () {
+    db.query("SELECT * FROM departments", async (err, res) => {
+        if (err) throw err;
+        console.table(res)
+    }) 
     inquirer
         .prompt(
             {
