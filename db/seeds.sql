@@ -17,8 +17,8 @@ VALUES ("Sales Lead", 80000, 1),
 
 INSERT INTO employee (first_name, last_name, roles_id, manager_id)
 VALUES ("Jim", "Halpert", 1, 1),
-("Creed", "Bratton", 2, 2),
+("Creed", "Bratton", 2, NULL),
 ("Angela", "Martin", 3, NULL),
-("Toby", "Flenderson", 4, 1),
-("Kelly", "Kapoor", 5, 1),
-("Pam", "Beesly", 5, 1);
+("Toby", "Flenderson", 4, 2),
+("Kelly", "Kapoor", 5, NULL),
+("Pam", "Beesly", 5, 3);
