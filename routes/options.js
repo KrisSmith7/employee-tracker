@@ -18,7 +18,7 @@ module.exports.options = function () {
             name: 'action',
 
             type: 'list',
-            message: 'Welcome to our employee database! What would you like to do?',
+            message: 'What would you like to do?',
             choices: [
                 'View all employees',
                 'View all departments',

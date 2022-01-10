@@ -26,7 +26,7 @@
 
   Example of the application in use can be found in the following link.
   
-  [Click here to see a video of the application.](https://watch.screencastify.com/)
+  [Click here to see a video of the application.](https://watch.screencastify.com/v/2vfBEEpDT9WzrrmgEJ71)
 
 
   ---
@@ -36,4 +36,5 @@
   ---
   ## Questions
   Contact the developer with any questions!
+
   Github User: [https://github.com/KrisSmith7](https://github.com/krissmith7)
