@@ -8,7 +8,16 @@ const options = require('./options');
 
 module.exports.viewAllEmployees = function () {
   // GET all employees
-  const sql = `SELECT * FROM employee ORDER BY last_name`;
+  const sql = `select e.id, e.first_name, e.last_name, r.title as role_name,
+  r.salary as salary, d.dept_name as dept_name, concat(m.first_name, " ", m.last_name) as manager
+  from employee e
+  left join roles r
+  on e.roles_id = r.id
+  left join department d
+  on r.department_id = d.id
+  left join employee m
+  on e.manager_id = m.id;`;
+
   db.query(sql, (err, res) => {
     if (err) { console.log(err) };
     console.table(res);
@@ -34,7 +43,15 @@ module.exports.viewSingleEmployee = function () {
         }
       })
     .then(function (answer) {
-      const sql = `SELECT * FROM employee WHERE id = ?`;
+      const sql = `select e.id, e.first_name, e.last_name, r.title as role_name,
+  r.salary as salary, d.dept_name as dept_name, concat(m.first_name, " ", m.last_name) as manager
+  from employee e
+  left join roles r
+  on e.roles_id = r.id
+  left join department d
+  on r.department_id = d.id
+  left join employee m
+  on e.manager_id = m.id WHERE e.id = ?`;
       const params = [answer.employee_id];
 
       db.query(sql, params, (err, row) => {
@@ -48,7 +65,7 @@ module.exports.viewSingleEmployee = function () {
 // Create an employee
 module.exports.addEmployee = function () {
   //get all the employee list to make choice of employee's manager
-  const employeeChoice = [{ name: 'None', value: null }]; //an employee could have no manager
+  const employeeChoice = [{ name: 'N/A', value: null }]; //an employee could have no manager
   db.query("SELECT id, first_name, last_name FROM EMPLOYEE", (err, eeRes) => {
     if (err) throw err;
     eeRes.forEach(({ first_name, last_name, id }) => {
@@ -109,7 +126,7 @@ module.exports.addEmployee = function () {
       name: 'manager_id',
       type: 'list',
       choices: employeeChoice,
-      message: "Who is the employee's manager? (can select none)"
+      message: "Who is the employee's manager? (can select N/A)"
     },
     ])
     .then(function (answer) {

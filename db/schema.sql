@@ -26,12 +26,3 @@ CREATE TABLE employee(
     manager_id INT,
     FOREIGN KEY(roles_id) REFERENCES roles(id) ON DELETE SET NULL
 );
-
-
--- WHEN I choose to view all employees
--- THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names,
--- job titles, departments, salaries, and managers that the employees report to
-
--- WHEN I choose to add an employee
--- THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
-
